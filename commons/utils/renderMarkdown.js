@@ -32,5 +32,20 @@ export default function renderMarkdown(text) {
     return defaultRender(tokens, idx, options, env, self);
   };
 
+  const defaultFence = md.renderer.rules.fence || function (tokens, idx, options, env, self) {
+    return self.renderToken(tokens, idx, options);
+  };
+  md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+    const original = defaultFence(tokens, idx, options, env, self);
+    return `
+<div class="code-block-wrapper">
+  <button type="button" class="copy-code-button" onclick="window.copyCode(this)" aria-label="Copy code" title="Copy code">
+    ${window.copyCodeIcon}
+  </button>
+  ${original}
+</div>
+`;
+  };
+
   return md.render(text);
 }
